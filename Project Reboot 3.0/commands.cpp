@@ -493,11 +493,11 @@ void ServerCheatHook(AFortPlayerControllerAthena* PlayerController, FString Msg)
 
 			SendMessageToConsole(PlayerController, std::wstring(PlayerNames.begin(), PlayerNames.end()).c_str());
 		}
-		else if (Command == "launch")
+		else if (Command == "launchplayer" || Command == "launch" || Command == "fling")
 		{
 			if (Arguments.size() <= 3)
 			{
-				SendMessageToConsole(PlayerController, L"Please provide X, Y, and Z!\n");
+				SendMessageToConsole(PlayerController, L"Please provide X, Y, and Z\n");
 				return;
 			}
 
@@ -514,21 +514,22 @@ void ServerCheatHook(AFortPlayerControllerAthena* PlayerController, FString Msg)
 
 			if (!Pawn)
 			{
-				SendMessageToConsole(PlayerController, L"No pawn to teleport!");
+				SendMessageToConsole(PlayerController, L"No pawn to launch");
 				return;
 			}
 
-			static auto LaunchCharacterFn = FindObject<UFunction>(L"/Script/Engine.Character.LaunchCharacter");
+			static auto LaunchCharacterJumpFn = FindObject<UFunction>(L"/Script/FortniteGame.FortPawn.LaunchCharacterJump");
 
 			struct
 			{
-				FVector                                     LaunchVelocity;                                           // (Parm, ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-				bool                                               bXYOverride;                                              // (Parm, ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-				bool                                               bZOverride;                                               // (Parm, ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-			} ACharacter_LaunchCharacter_Params{ FVector(X, Y, Z), false, false };
-			Pawn->ProcessEvent(LaunchCharacterFn, &ACharacter_LaunchCharacter_Params);
+				FVector                                     LaunchVelocity;
+				bool                                               bXYOverride;
+				bool                                               bZOverride;
+				bool											   bIgnoreFallDamage;
+			} ACharacter_LaunchCharacterJump_Params{ FVector(X, Y, Z), false, false, true };
+			Pawn->ProcessEvent(LaunchCharacterJumpFn, &ACharacter_LaunchCharacterJump_Params);
 
-			SendMessageToConsole(PlayerController, L"Launched character!");
+			SendMessageToConsole(PlayerController, L"Player launched");
 		}
 		else if (Command == "setshield")
 		{
