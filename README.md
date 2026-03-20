@@ -16,7 +16,6 @@ later on
 - More supportive gameplay on s20+
 - Game fixes
 - Custom commands
-- ItemGranter9000 (easy item granter)
 - GUI re-design
 - more ig
 
